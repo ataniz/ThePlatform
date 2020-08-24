@@ -1,8 +1,3 @@
-// import mongoose from 'mongoose';
-// import { get } from 'config';
-// const db = get('mongoURI');
-
-// es5 way of writing it
 const mongoose = require('mongoose');
 const config = require('config');
 const db = config.get('mongoURI');
@@ -12,6 +7,7 @@ const connectDB = async () => {
     await mongoose.connect(db, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useCreateIndex: true,
     });
 
     console.log('MongoDB Connected...');
