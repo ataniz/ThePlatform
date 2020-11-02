@@ -5,7 +5,12 @@ const ProfileSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
   },
-  nickname: {
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  website: {
     type: String,
   },
   status: {
@@ -13,13 +18,26 @@ const ProfileSchema = new mongoose.Schema({
   },
   location: {
     type: String,
-    required: true,
   },
-  highschool: {
+  education: {
     type: String,
-    required: true,
+  },
+  bio: {
+    type: String,
+  },
+  interests: {
+    type: [String],
   },
   social: {
+    youtube: {
+      type: String,
+    },
+    linkedin: {
+      type: String,
+    },
+    github: {
+      type: String,
+    },
     twitter: {
       type: String,
     },

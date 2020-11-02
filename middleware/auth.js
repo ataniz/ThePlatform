@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('config');
+// you may use passport to add twitter, facebook logins
 
 module.exports = function (req, res, next) {
   // get token from header
@@ -17,6 +18,6 @@ module.exports = function (req, res, next) {
     req.user = decoded.user;
     next();
   } catch (error) {
-    res.status(401).json({ msg: 'Invalid token!' });
+    res.status(401).json({ msg: 'Invalid token! (session expired?)' });
   }
 };

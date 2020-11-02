@@ -11,6 +11,7 @@ const User = require('../../models/User');
 // @access Private
 router.get('/me', auth, async (req, res) => {
   try {
+    // populate brings in the requested fields from the model
     const profile = await Profile.findOne({
       user: req.user.id,
     }).populate('user', ['name', 'avatar']);
@@ -24,18 +25,12 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// @route GET api/profile
-// @desc Create or update  users profile
+// @route POST api/profile
+// @desc Create or update user profile
 // @access Private
 router.post(
   '/',
-  [
-    auth,
-    [
-      check('location', 'Location is required').not().isEmpty(),
-      check('highschool', 'Highschool is required').not().isEmpty(),
-    ],
-  ],
+  [auth, [check('username', 'username is required').not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -43,25 +38,51 @@ router.post(
     }
 
     const {
-      nickname,
+      username,
       status,
+      website,
       location,
-      highschool,
+      education,
+      bio,
+      interests,
+      youtube,
+      linkedin,
+      github,
       twitter,
       facebook,
       instagram,
     } = req.body;
 
+    // check if username exists
+    let userProfile = await Profile.findOne({ username });
+
+    if (userProfile && userProfile.user != req.user.id) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: 'Username already exists' }] });
+    }
+
     // Build profile object
     const profileFields = {};
     profileFields.user = req.user.id;
-    if (nickname) profileFields.nickname = nickname;
+    if (username) profileFields.username = username;
     if (status) profileFields.status = status;
+    if (website) profileFields.website = website;
     if (location) profileFields.location = location;
-    if (highschool) profileFields.highschool = highschool;
+    if (education) profileFields.education = education;
+    if (bio) profileFields.bio = bio;
+    if (interests) {
+      profileFields.interests = interests
+        .split(',')
+        .map((interest) => interest.trim());
+    }
+    // console.log(profileFields.interests);
 
     // Build social object
     profileFields.social = {};
+    if (youtube) profileFields.social.youtube = youtube;
+    if (linkedin) profileFields.social.linkedin = linkedin;
+    if (github) profileFields.social.github = github;
     if (twitter) profileFields.social.twitter = twitter;
     if (facebook) profileFields.social.facebook = facebook;
     if (instagram) profileFields.social.instagram = instagram;
